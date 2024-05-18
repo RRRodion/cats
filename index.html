@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Cats</title>
+</head>
+<body>
+
+<div class="container">
+<div class="left">
+    <div class="name">Random Cat Generator</div>
+    <div class="help">Choose your options and click "Get" to see a cat!</div>
+
+    <label for="type">Type:</label>
+    <select id="type">
+        <option value="">image</option>
+        <option value="gif">gif</option>
+    </select>
+    <label for="size">Size:</label>
+    <select id="size">
+        <option value="">-</option>
+        <option value="square">square</option>
+        <option value="medium">medium</option>
+        <option value="small">small</option>
+        <option value="xsmall">xsmall</option>
+    </select>
+    <label for="tags">Tags:</label>
+    <select id="tags" multiple>
+    </select>
+    <label for="filter">Filter:</label>
+    <select id="filter" name="filter">
+        <option value="">None</option>
+        <option value="mono">Monochrome</option>
+        <option value="negate">Negate</option>
+        <option value="custom">Custom</option>
+    </select><br>
+    <label for="text">Your text:</label>
+    <input id="text">
+
+    <label for="fontSize">Font Size:</label>
+    <input class="font-input" type="number" id="fontSize" name="fontSize" value="20"><br>
+
+    <label for="fontColor">Font Color:</label>
+    <input type="color" id="fontColor" name="fontColor" value="#000000"><br>
+    <button class="sendBtn">Get cat</button>
+</div>
+
+<div class="right">
+    <img class="catImage" src="https://turbok.by/public/img/no-photo--lg.png" alt="кот">
+    <div class="text" id="text1">кот не найден, измени параметры и попробуй еще раз :(</div>
+</div>
+</div>
+
+</body>
+<script src="index.js"></script>
+</html>
