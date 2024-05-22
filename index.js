@@ -5,7 +5,7 @@ const text = document.querySelector('.text')
 //теги
 document.addEventListener('DOMContentLoaded', () => {
     const tagsSelect = document.getElementById("tags");
-    const tagsUrl = new URL('/api/tags', url);
+    const tagsUrl = new URL('/api/tags', window.location.origin);
 
     fetch(tagsUrl.href)
         .then(response => response.json())
@@ -16,30 +16,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 option.text = tag;
                 tagsSelect.appendChild(option);
             });
-            data.forEach(tag => {
-                const option = document.createElement("option");
-                option.value = tag;
-                option.text = tag;
-                tagsSelect.appendChild(option);
-            });
-            tagsSelect.addEventListener('change', function () {
-                const options = tagsSelect.options;
-                for (let i = 0; i < options.length; i++) {
-                    const option = options[i];
-                    if (option.selected) {
-                        option.classList.add('selected');
-                    } else {
-                        option.classList.remove('selected');
-                    }
-                }
-            });
         })
         .catch(error => {
             console.error('Error:', error);
         });
+
+    tagsSelect.addEventListener('change', function () {
+        const options = tagsSelect.options;
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.selected) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        }
+    });
 });
 
-function initializeVariables () {
+
+function getFormValues () {
     const img = document.querySelector('.catImage')
     const size = document.getElementById('size');
     const typeSelectElement = document.getElementById('type');
@@ -71,7 +67,7 @@ buttonElement.addEventListener('click', () => {
 function fetchImage() {
     const catUrl = new URL('/cat', url);
     const params = new URLSearchParams(catUrl.search);
-    const variable = initializeVariables();
+    const variable = getFormValues();
 
     buttonElement.disabled = true;
     // фото или гиф
