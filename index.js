@@ -1,7 +1,9 @@
 const url = new URL('https://cataas.com');
+const buttonElement = document.querySelector('.sendBtn');
+const text = document.querySelector('.text')
 
 //теги
-(function getTags() {
+document.addEventListener('DOMContentLoaded', () => {
     const tagsSelect = document.getElementById("tags");
     const tagsUrl = new URL('/api/tags', url);
 
@@ -35,10 +37,9 @@ const url = new URL('https://cataas.com');
         .catch(error => {
             console.error('Error:', error);
         });
-})()
+});
 
-
-document.addEventListener('DOMContentLoaded', () => {
+function initializeVariables () {
     const img = document.querySelector('.catImage')
     const size = document.getElementById('size');
     const typeSelectElement = document.getElementById('type');
@@ -47,83 +48,86 @@ document.addEventListener('DOMContentLoaded', () => {
     const textInputElement = document.getElementById('text');
     const fontSizeInputElement = document.getElementById('fontSize');
     const fontColorInputElement = document.getElementById('fontColor');
-    const text = document.querySelector('.text')
-    const buttonElement = document.querySelector('.sendBtn');
 
-    text.style.display = 'none'
+    return {
+        img,
+        sizeValue: size.value,
+        typeValue: typeSelectElement.value,
+        tagsValue: Array.from(tagsSelectElement.selectedOptions).map(option => option.value).join(','),
+        filterValue: filterSelectElement.value,
+        textValue: textInputElement.value,
+        fontSizeValue: fontSizeInputElement.value,
+        fontColorValue: fontColorInputElement.value,
+        text,
+    };
+}
 
-    buttonElement.addEventListener('click', () => {
-        fetchImage()
-    });
+text.style.display = 'none'
 
-    function fetchImage() {
-        const sizeValue = size.value;
-        const typeValue = typeSelectElement.value;
-        const tagsValue = Array.from(tagsSelectElement.selectedOptions).map(option => option.value).join(',');
-        const filterValue = filterSelectElement.value;
-        const textValue = textInputElement.value;
-        const fontSizeValue = fontSizeInputElement.value;
-        const fontColorValue = fontColorInputElement.value;
-        const catUrl = new URL('/cat', url);
-        const params = new URLSearchParams(catUrl.search);
-
-        buttonElement.disabled = true;
-        // фото или гиф
-        if (typeValue === 'gif') {
-            catUrl.pathname += '/gif';
-        }
-        // теги
-        if (tagsValue !== '') {
-            catUrl.pathname += `/${tagsValue}`;
-        }
-        // текст
-        if (textValue.trim() !== '') {
-            catUrl.pathname += `/says/${encodeURIComponent(textValue.trim())}`;
-
-            if (fontSizeValue !== '') {
-                params.set('fontSize', fontSizeValue);
-            }
-
-            if (fontColorValue !== '') {
-                params.set('fontColor', fontColorValue);
-            }
-        }
-
-        // размер
-        if (sizeValue !== '') {
-            params.set('type', sizeValue);
-        }
-        // фильтр
-        if (filterValue !== '') {
-            params.set('filter', filterValue);
-        }
-
-        catUrl.search = params.toString();
-
-        console.log(catUrl.href);
-
-        fetch(catUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response;
-
-            })
-            .then(response => {
-                img.src = response.url;
-                img.onload = () => {
-                    buttonElement.disabled = false;
-                    text.style.display = 'none';
-                    img.style.display = 'block';
-                };
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-                img.style.display = 'none';
-                text.style.display = 'block';
-                buttonElement.disabled = false;
-            });
-    }
+buttonElement.addEventListener('click', () => {
+    fetchImage()
 });
 
+function fetchImage() {
+    const catUrl = new URL('/cat', url);
+    const params = new URLSearchParams(catUrl.search);
+    const variable = initializeVariables();
+
+    buttonElement.disabled = true;
+    // фото или гиф
+    if (variable.typeValue === 'gif') {
+        catUrl.pathname += '/gif';
+    }
+    // теги
+    if (variable.tagsValue !== '') {
+        catUrl.pathname += `/${variable.tagsValue}`;
+    }
+    // текст
+    if (variable.textValue.trim() !== '') {
+        catUrl.pathname += `/says/${encodeURIComponent(variable.textValue.trim())}`;
+
+        if (variable.fontSizeValue !== '') {
+            params.set('fontSize', variable.fontSizeValue);
+        }
+
+        if (variable.fontColorValue !== '') {
+            params.set('fontColor', variable.fontColorValue);
+        }
+    }
+
+    // размер
+    if (variable.sizeValue !== '') {
+        params.set('type', variable.sizeValue);
+    }
+    // фильтр
+    if (variable.filterValue !== '') {
+        params.set('filter', variable.filterValue);
+    }
+
+    catUrl.search = params.toString();
+
+    console.log(catUrl.href);
+
+    fetch(catUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response;
+
+        })
+        .then(response => {
+            variable.img.src = response.url;
+            variable.img.onload = () => {
+                buttonElement.disabled = false;
+                text.style.display = 'none';
+                variable.img.style.display = 'block';
+            };
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            variable.img.style.display = 'none';
+            text.style.display = 'block';
+            buttonElement.disabled = false;
+        });
+}
