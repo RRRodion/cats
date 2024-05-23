@@ -5,21 +5,8 @@ const text = document.querySelector('.text')
 //теги
 document.addEventListener('DOMContentLoaded', () => {
     const tagsSelect = document.getElementById("tags");
-    const tagsUrl = new URL('/api/tags', window.location.origin);
 
-    fetch(tagsUrl.href)
-        .then(response => response.json())
-        .then(data => {
-            data.filter(tag => tag !== '').forEach(tag => { // Фильтрация пустых тегов
-                const option = document.createElement("option");
-                option.value = tag;
-                option.text = tag;
-                tagsSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+    fetchTags('/api/tags', url, tagsSelect);
 
     tagsSelect.addEventListener('change', function () {
         const options = tagsSelect.options;
@@ -34,10 +21,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+function fetchTags(apiPath, baseUrl, selectElement) {
+    const tagsUrl = new URL(apiPath, baseUrl);
+
+    fetch(tagsUrl.href)
+        .then(response => response.json())
+        .then(data => {
+            data.filter(tag => tag !== '').forEach(tag => { // Фильтрация пустых тегов
+                const option = document.createElement("option");
+                option.value = tag;
+                option.text = tag;
+                selectElement.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
 
 function getFormValues () {
-    const img = document.querySelector('.catImage')
-    const size = document.getElementById('size');
+    const catImage = document.querySelector('.catImage')
+    const sizeSelectElement = document.getElementById('size');
     const typeSelectElement = document.getElementById('type');
     const tagsSelectElement = document.getElementById('tags');
     const filterSelectElement = document.getElementById('filter');
@@ -46,8 +51,8 @@ function getFormValues () {
     const fontColorInputElement = document.getElementById('fontColor');
 
     return {
-        img,
-        sizeValue: size.value,
+        catImage,
+        sizeValue: sizeSelectElement.value,
         typeValue: typeSelectElement.value,
         tagsValue: Array.from(tagsSelectElement.selectedOptions).map(option => option.value).join(','),
         filterValue: filterSelectElement.value,
@@ -113,16 +118,16 @@ function fetchImage() {
 
         })
         .then(response => {
-            variable.img.src = response.url;
-            variable.img.onload = () => {
+            variable.catImage.src = response.url;
+            variable.catImage.onload = () => {
                 buttonElement.disabled = false;
                 text.style.display = 'none';
-                variable.img.style.display = 'block';
+                variable.catImage.style.display = 'block';
             };
         })
         .catch(error => {
             console.error('There has been a problem with your fetch operation:', error);
-            variable.img.style.display = 'none';
+            variable.catImage.style.display = 'none';
             text.style.display = 'block';
             buttonElement.disabled = false;
         });
